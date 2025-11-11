@@ -1,0 +1,24 @@
+{
+  "eventos": {
+    "1": {
+      "nome": "Feira de Ciências",
+      "data": "26/11/2025",
+      "local": "ECIT Cristiano Cartaxo",
+      "telefone": "83991184087",
+      "inscricoes": [
+        {
+          "nome": "Davi Oliveira de Sá",
+          "email": "olivdavi40@gmail.com"
+        }
+      ]
+    },
+    "2": {
+      "nome": "Semana Acadêmica",
+      "data": "24/11 a 28/11",
+      "local": "ECIT Cristiano Cartaxo",
+      "telefone": "83991184087",
+      "inscricoes": []
+    }
+  },
+  "next_id": 4
+}
