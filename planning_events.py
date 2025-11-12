@@ -217,6 +217,71 @@ def abrir_consultar_inscritos(parent, tree):
     txt.config(state="disabled")
     txt.pack(padx=8, pady=8)
 
+def abrir_remover_participante(parent, tree):
+    """
+    Abre uma janela com a lista de inscritos do evento selecionado e permite remover um inscrito.
+    """
+    selected = tree.selection()
+    if not selected:
+        messagebox.showwarning(APP_NAME, "Selecione um evento.", parent=parent)
+        return
+    id_evento = int(selected[0])
+    dados = eventos.get(id_evento)
+    if dados is None:
+        messagebox.showerror(APP_NAME, "Evento não encontrado.", parent=parent)
+        return
+
+    inscritos = dados.get("inscricoes", [])
+    if not inscritos:
+        messagebox.showinfo("Sem inscritos", "Este evento não possui inscritos.", parent=parent)
+        return
+
+    win = tk.Toplevel(parent)
+    win.title(f"Remover Inscrito - {dados.get('nome')}")
+    win.transient(parent)
+    win.grab_set()
+    win.resizable(False, False)
+    win.lift()
+
+    frm = ttk.Frame(win, padding=12)
+    frm.grid(row=0, column=0)
+
+    ttk.Label(frm, text=f"Inscritos ({len(inscritos)}):").grid(row=0, column=0, sticky="w")
+
+    listbox = tk.Listbox(frm, width=60, height=12, exportselection=False)
+    for p in inscritos:
+        listbox.insert("end", f"{p.get('nome')} ({p.get('email')})")
+    listbox.grid(row=1, column=0, pady=(6,0))
+
+    # botões
+    btn_frame = ttk.Frame(frm)
+    btn_frame.grid(row=2, column=0, pady=(8,0))
+
+    def remover_selecionado():
+        sel = listbox.curselection()
+        if not sel:
+            messagebox.showwarning("Seleção", "Selecione um inscrito para remover.", parent=win)
+            return
+        idx = sel[0]
+        participante = inscritos[idx]
+        nome = participante.get("nome", "—")
+        if messagebox.askyesno("Confirmar", f"Remover {nome} do evento?", parent=win):
+            try:
+                # remove do dado original
+                dados["inscricoes"].pop(idx)
+                save_events()
+                atualizar_treeview(tree)
+                messagebox.showinfo("Removido", f"{nome} foi removido.", parent=win)
+                win.destroy()
+            except Exception as e:
+                messagebox.showerror("Erro", f"Falha ao remover participante: {e}", parent=win)
+
+    def cancelar():
+        win.destroy()
+
+    ttk.Button(btn_frame, text="Remover Selecionado", command=remover_selecionado).grid(row=0, column=0, padx=6)
+    ttk.Button(btn_frame, text="Cancelar", command=cancelar).grid(row=0, column=1, padx=6)
+
 def remover_evento(tree):
     selected = tree.selection()
     if not selected:
@@ -300,6 +365,7 @@ def criar_interface():
     ttk.Button(bar, text="Adicionar Evento", command=lambda: abrir_adicionar_evento(root, tree, style)).pack(side="left", padx=6)
     ttk.Button(bar, text="Inscrever Participante", command=lambda: abrir_inscrever_participante(root, tree)).pack(side="left", padx=6)
     ttk.Button(bar, text="Consultar Inscritos", command=lambda: abrir_consultar_inscritos(root, tree)).pack(side="left", padx=6)
+    ttk.Button(bar, text="Remover Participante", command=lambda: abrir_remover_participante(root, tree)).pack(side="left", padx=6)
     ttk.Button(bar, text="Remover Evento", command=lambda: remover_evento(tree)).pack(side="left", padx=6)
 
     # Botão Sair
