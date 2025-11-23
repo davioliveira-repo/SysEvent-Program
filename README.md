@@ -1,5 +1,5 @@
-# SysEvent-PlanningEvents
- Site e Programa para o Agendamento de Eventos
+# SysEvent-Program
+ Programa para o Agendamento de Eventos
 
 Grupo:
 - Davi Oliveira de Sá
